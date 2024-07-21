@@ -1,40 +1,8 @@
-
-# def parse_log_line(line: str) -> dict:
-    
-#     #приймає рядок з логу як вхідний параметр і повертає словник з розібраними компонентами: дата, час, рівень, повідомлення. 
-#     #Використовуйте методи рядків, такі як split(), для розділення рядка на частини.
-#     res = [lines.split() for lines in line ]
-#     dict = {res.append}
-#     return print(dict)
-
-# def load_logs(file_path: str) -> list:
-#     pass
-#     # відкриває файл, читає кожен рядок і застосовує на нього функцію parse_log_line, зберігаючи результати в список.
-#     with open(file="Logs.txt", mode='r', encoding='utf-8') as logfile:
-#         loglines = [el.parse_log_line for el in logfile.readline()]
-        
-
-# def filter_logs_by_level(logs: list, level: str) -> list:
-#     pass
-#     filter_logs = [log for level in logs]
-
-# def count_logs_by_level(logs: list) -> dict:
-#     pass
-#     #Підрахунок записів за рівнем логування повинна робити функція count_logs_by_level(logs: list) -> dict, 
-#     # яка проходить по всім записам і підраховує кількість записів для кожного рівня логування.
-#     with open(file="Logs.txt", mode='r', encoding='utf-8') as logfile:
-       
-
-
-# def display_log_counts(counts: dict):
-#     # форматує та виводить результати. Ф-я приймає результати виконання функції count_logs_by_level.
-#     pass
-
-
 import sys
 
+
 def parse_log_line(line: str) -> dict:
-    parts = line.split(' ', 3)  # Розділити на 4 частини: дата, час, рівень, повідомлення
+    parts = line.split(' ', 3)
     date = parts[0]
     time = parts[1]
     level = parts[2]
