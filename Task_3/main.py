@@ -1,32 +1,97 @@
-# Скрипт повинен приймати шлях до файлу логів як аргумент командного рядка.
-# Скрипт повинен приймати не обов'язковий аргумент командного рядка, після аргументу шляху до файлу логів. Він відповідає за виведення всіх записи певного рівня логування. І приймає значення відповідно до рівня логування файлу. Наприклад аргумент error виведе всі записи рівня ERROR з файлу логів.
-# Скрипт має зчитувати і аналізувати лог-файл, підраховуючи кількість записів для кожного рівня логування (INFO, ERROR, DEBUG, WARNING).
-# Реалізуйте функцію parse_log_line(line: str) -> dict для парсингу рядків логу.
-# Реалізуйте функцію load_logs(file_path: str) -> list для завантаження логів з файлу.
-# Реалізуйте функцію filter_logs_by_level(logs: list, level: str) -> list для фільтрації логів за рівнем.
-# Реалізуйте функцію count_logs_by_level(logs: list) -> dict для підрахунку записів за рівнем логування.
-# Результати мають бути представлені у вигляді таблиці з кількістю записів для кожного рівня. Для цього реалізуйте функцію display_log_counts(counts: dict), яка форматує та виводить результати. Вона приймає результати виконання функції count_logs_by_level.
-from pathlib import Path
+
+# def parse_log_line(line: str) -> dict:
+    
+#     #приймає рядок з логу як вхідний параметр і повертає словник з розібраними компонентами: дата, час, рівень, повідомлення. 
+#     #Використовуйте методи рядків, такі як split(), для розділення рядка на частини.
+#     res = [lines.split() for lines in line ]
+#     dict = {res.append}
+#     return print(dict)
+
+# def load_logs(file_path: str) -> list:
+#     pass
+#     # відкриває файл, читає кожен рядок і застосовує на нього функцію parse_log_line, зберігаючи результати в список.
+#     with open(file="Logs.txt", mode='r', encoding='utf-8') as logfile:
+#         loglines = [el.parse_log_line for el in logfile.readline()]
+        
+
+# def filter_logs_by_level(logs: list, level: str) -> list:
+#     pass
+#     filter_logs = [log for level in logs]
+
+# def count_logs_by_level(logs: list) -> dict:
+#     pass
+#     #Підрахунок записів за рівнем логування повинна робити функція count_logs_by_level(logs: list) -> dict, 
+#     # яка проходить по всім записам і підраховує кількість записів для кожного рівня логування.
+#     with open(file="Logs.txt", mode='r', encoding='utf-8') as logfile:
+       
 
 
+# def display_log_counts(counts: dict):
+#     # форматує та виводить результати. Ф-я приймає результати виконання функції count_logs_by_level.
+#     pass
+
+
+import sys
 
 def parse_log_line(line: str) -> dict:
-    pass
-    #приймає рядок з логу як вхідний параметр і повертає словник з розібраними компонентами: дата, час, рівень, повідомлення. 
-    #Використовуйте методи рядків, такі як split(), для розділення рядка на частини.
-    res = [lines.split() for lines in line ]
+    parts = line.split(' ', 3)  # Розділити на 4 частини: дата, час, рівень, повідомлення
+    date = parts[0]
+    time = parts[1]
+    level = parts[2]
+    message = parts[3]
+    return {'date': date, 'time': time, 'level': level, 'message': message}
+
 
 def load_logs(file_path: str) -> list:
-    pass
-    # відкриває файл, читає кожен рядок і застосовує на нього функцію parse_log_line, зберігаючи результати в список.
-def filter_logs_by_level(logs: list, level: str) -> list:
-    pass
+    logs = []
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            for line in file:
+                logs.append(parse_log_line(line.strip()))
+    except FileNotFoundError as e:
+        print(f"Error: {e}")
+    return logs
 
 
 def count_logs_by_level(logs: list) -> dict:
-    pass
+    counts = {}
+    for log in logs:
+        level = log['level']
+        if level in counts:
+            counts[level] += 1
+        else:
+            counts[level] = 1
+    return counts
 
 
 def display_log_counts(counts: dict):
-    # форматує та виводить результати. Ф-я приймає результати виконання функції count_logs_by_level.
-    pass
+    print("Рівень логування | Кількість")
+    print("-----------------|----------")
+    for level, count in counts.items():
+        print(f"{level:<16} | {count}")
+
+
+def filter_logs_by_level(logs: list, level: str) -> list:
+    return [log for log in logs if log['level'].lower() == level.lower()]
+
+
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: python main.py /path/to/logfile.log [level]")
+        return
+
+    file_path = sys.argv[1]
+    level_filter = sys.argv[2] if len(sys.argv) > 2 else None
+
+    logs = load_logs(file_path)
+    counts = count_logs_by_level(logs)
+    display_log_counts(counts)
+
+    if level_filter:
+        filtered_logs = filter_logs_by_level(logs, level_filter)
+        print(f"\nДеталі логів для рівня '{level_filter.upper()}':")
+        for log in filtered_logs:
+            print(f"{log['date']} {log['time']} - {log['message']}")
+
+if __name__ == "__main__":
+    main()
